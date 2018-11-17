@@ -48,7 +48,7 @@ public:
   }
 
   void build(int o, int fa, int limit) {
-    static int l[MAXN+1];
+    static int a[MAXN+1];
     static Set prev, nex;
     f[o][0] = f[o][1] = 0;
     for (int i=ind[o]; i; i=next[i]) {
@@ -56,50 +56,48 @@ public:
 	build(to[i], o, limit);
       }
     }
-
-    l[0]=0;
+    a[0] = 0;
     for (int i=ind[o]; i; i=next[i]) {
       if (to[i]!=fa) {
-	l[++l[0]] = f[to[i]][1]+len[i];
+	a[++a[0]] = f[to[i]][1]+len[i];
 	f[o][0] += f[to[i]][0];
       }
     }
 
-    sort(l+1, l+l[0]+1);
-    int temp=l[0]+1;
-    for (int x=1, y=l[0], mid; x<=y; ) {
-      mid = (x+y)/2;
-      if (l[mid]>=limit) {
+    sort(a+1, a+a[0]+1);
+    int temp=a[0]+1;
+    for (int l=1, r=a[0], mid; l<=r; ) {
+      mid = (l+r)/2;
+      if (a[mid]>=limit) {
+	r = mid-1;
 	temp = mid;
-	y = mid-1;
       } else {
-	x = mid+1;
+	l = mid+1;
       }
     }
-    f[o][0] += l[0]-temp+1;
-    l[0] = temp-1;
+    f[o][0] += a[0]-temp+1;
+    a[0] = temp-1;
 
-    prev.update();
-    prev.merge(l[0]+1, l[0]);
-    nex.update();
-    for (int i=1; i<=l[0]; i=nex.get(i+1)) {
-      int p=0;
-      for (int x=i+1, y=l[0], mid; x<=y; ) {
-	mid = prev.get((x+y)/2);
-	if (mid>=x && l[mid]+l[i]>=limit) {
-	  y = prev.get(mid-1);
-	  p = mid;
+    prev.update(), nex.update();
+    prev.merge(a[0]+1, a[0]);
+    for (int i=nex.get(1); i<=a[0]; i=nex.get(i+1)) {
+      temp = 0;
+      for (int l=nex.get(i+1), r=prev.get(a[0]), mid; l<=r; ) {
+	mid = prev.get((l+r)/2);
+	if (mid>=l && a[i]+a[mid]>=limit) {
+	  temp = mid;
+	  r = prev.get(mid-1);
 	} else {
-	  x = nex.get(mid+1);
+	  l = nex.get(mid+1);
 	}
       }
-      if (p && prev.get(p)==p) {
-	prev.merge(i, i-1), prev.merge(p, p-1);
-	nex.merge(i, i+1), nex.merge(p, p+1);
+      if (temp) {
 	f[o][0]++;
+	prev.merge(i, i-1), prev.merge(temp, temp-1);
+	nex.merge(i, i+1), nex.merge(temp, temp+1);
       }
     }
-    f[o][1] = l[prev.get(l[0]+1)];
+    f[o][1] = a[prev.get(a[0]+1)];
   }
 
   int getAns(int num) {
