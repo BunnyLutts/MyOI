@@ -1,0 +1,46 @@
+#define DEBUG
+#include <cstdio>
+#include <cstring>
+#define MAXN 11
+
+char s[MAXN+1];
+int a[MAXN+1], ans, n;
+bool book[MAXN+1];
+
+void generate(int o) {
+  if (o>n) {
+  } else {
+    for (int i=1; i<=n; i++) {
+      if (!book[i]) {
+	if (s[o-1]=='?' || (s[o-1]=='I' && a[o-1]<i) || (s[o-1]=='D' && a[o-1]>i)) {
+	  book[i] = true;
+	  a[o] = i;
+	  generate(o+1);
+	  book[i] = false;
+	}
+	if ((s[o-1]=='?' || ) ) {
+	  book[i] = true;
+	  a[o] = i;
+	  generate(o+1);
+	  book[i] = false;
+	}
+      }
+    }
+  }
+}
+
+int main() {
+#ifdef DEBUG
+  freopen("2.in", "r", stdin);
+  freopen("2.out", "w", stdout);
+#endif
+
+  scanf("%d", s+1);
+  n=strlen(s+1)+1;
+  generate(1);
+  printf("%d", ans);
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
