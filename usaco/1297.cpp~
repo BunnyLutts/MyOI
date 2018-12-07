@@ -1,0 +1,18 @@
+#define DEBUG
+#include <cstdio>
+
+using namespace std;
+
+int main() {
+#ifdef DEBUG
+  freopen("1297.in", "r", stdin);
+  freopen("1297.out", "w", stdout);
+#endif
+
+  int n, m;
+  scanf("%d %d", );
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
