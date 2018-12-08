@@ -1,0 +1,17 @@
+#define DEBUG
+#include <cstdio>
+
+using namespace std;
+
+int main() {
+#ifdef DEBUG
+  freopen("5229.in", "r", stdin);
+  freopen("5229.out", "w", stdout);
+#endif
+
+  int t;
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
