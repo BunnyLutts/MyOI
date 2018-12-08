@@ -1,0 +1,100 @@
+% Created 2018-12-08 六 16:51
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Lutts}
+\date{\today}
+\title{JZOJ Contest2558 总结}
+\hypersetup{
+ pdfauthor={Lutts},
+ pdftitle={JZOJ Contest2558 总结},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.0.50 (Org mode 9.1.9)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{前言}
+\label{sec:org6e3370a}
+今天这场比赛\ldots{}\ldots{}怎么说呢\ldots{}\ldots{}感觉第二第三题很奇 \sout{葩} 妙.
+
+\section{比赛时}
+\label{sec:org3bd9567}
+\sout{其实比赛时还看了一会儿B组题目的}
+
+\subsection{第一题}
+\label{sec:orga9606f2}
+花两三分钟看了这道题.然后想起来某位苏姓热爱数学的同学曾今出的一道关于斐波那契数列的数学题.果断推了一波:
+
+a b a+b a+2b 2a+3b \ldots{}\ldots{}
+
+等会儿!这不是:
+
+\textbf{a的系数为斐波那契数列的一项,b的系数为斐波那契数列一项减1}
+
+果断矩阵乘法斐波那契.
+
+最后注意一下a<0的情况 \sout{我就差点GG了}
+
+\subsection{第二题}
+\label{sec:org7c9f483}
+果断O( n\(^{\text{2}}\) )
+
+\textbf{然而没调出来}
+
+\subsection{第三题}
+\label{sec:org92ecfa2}
+理解起来都有些吃力
+
+第二眼瞄到30分数据\ldots{}\ldots{}嘿嘿嘿
+
+\subsection{总结}
+\label{sec:orgbf5c01f}
+然后
+
+\textbf{100+0+30=130}
+
+还可以,但是第二题调出来可以更好一些的 :(
+
+\section{讲题后}
+\label{sec:org213d8c4}
+第二题云里雾里的
+
+第三题\ldots{}\ldots{}呃\ldots{}\ldots{}Nim
+
+\section{改题}
+\label{sec:org8b64840}
+\subsection{第三题}
+\label{sec:org7381b6e}
+第三题有大坑!!!
+
+嗯,其实坑也不大
+
+就是注意一下循环的边界条件就好了
+
+\sout{调了我整整30+分钟啊!!!}
+
+\section{总结}
+\label{sec:org88174bc}
+主要是程序的调试能力不足,没有善用好静态调试. \uline{NOIP2018也是这样,然后\ldots{}\ldots{}}
+
+加油
+
+\emph{2018.12.8 16:41}
+\end{document}
