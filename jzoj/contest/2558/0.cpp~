@@ -1,0 +1,41 @@
+#define DEBUG
+#include <cstdio>
+
+using namespace std;
+
+class Matrix {
+public:
+  int n, m, a[2][2];
+
+  Matrix operator+ (Matrix a) {
+    Matrix ret;
+    if (m!=a.n) {
+      throw "Cannot calc sum.";
+    }
+    ret.n=n, ret.m=a.m;
+    for (int i=1; i<=ret.n; i++) {
+      for (int j=1; j<=ret.m; j++) {
+	ret.a[i][j] = 0;
+	for (int k=1; k<=m; k++) {
+	  ret.a[i][j] += this->a[i][k]*a.a[k][j];
+	}
+      }
+    }
+
+    return ret;
+  }
+};
+
+int main() {
+#ifdef DEBUG
+  freopen("0.in", "r", stdin);
+  freopen("0.out", "w", stdout);
+#endif
+
+  int n, k;
+  scanf("%d %d", &n, &k);
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
