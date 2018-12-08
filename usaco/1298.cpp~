@@ -1,0 +1,11 @@
+#define DEBUG
+#include <cstdio>
+
+using namespace std;
+
+int main() {
+#ifdef DEBUG
+  freopen("");
+#endif
+  return 0;
+}

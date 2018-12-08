@@ -1,6 +1,8 @@
 #define DEBUG
 #include <cstdio>
 #include <algorithm>
+#include <cassert>
+
 #define MAXN 5000
 #define MAXK 100000
 
@@ -29,7 +31,7 @@ public:
   }
 };
 
-void makeHash(int n, Candy a[n], int &xn, int &yn) {
+void makeHash(int n, Candy a[], int &xn, int &yn) {
   static HashEle x[MAXN+1], y[MAXN+1];
   for (int i=1; i<=n; i++) {
     x[i].init(&a[i].x);
@@ -59,42 +61,78 @@ void makeHash(int n, Candy a[n], int &xn, int &yn) {
 
 int solve(int n, int k, Candy candy[], int xn, int yn) {
   static int bucket[MAXK+1][2];
+  int ans=0, ver=0;
   sort(candy+1, candy+n, Candy::cmpX);
   for (int i=1; i<=yn; i++) {
-    bucket[0][0] = i;
+    ver++;
+    bucket[0][0] = ver;
     bucket[0][1] = 0;
     for (int h=1, t=1, ph=1, pt=1; t<=xn; t++) {
-      for (; candy[pt].x<=t; pt++) {
-	if (bucket[candy[pt].color][0]!=i) {
-	  bucket[candy[pt].color][0] = i;
-	  bucket[candy[pt].color][1] = 0;
+      for (; pt<=n && candy[pt].x<=t; pt++) {
+	if (candy[pt].y<=i) {
+	  if (bucket[candy[pt].color][0]!=ver) {
+	    bucket[candy[pt].color][0] = ver;
+	    bucket[candy[pt].color][1] = 0;
+	  }
+	  if (!bucket[candy[pt].color][1]) {
+	    bucket[0][1]++;
+	  }
+	  bucket[candy[pt].color][1]++;
 	}
-	if (!bucket[candy[pt].color][1]) {
-	  bucket[0][1]++;
-	}
-	bucket[candy[pt].color][1]++;
       }
       for (; h<=t && bucket[0][1]>=k; h++) {
 	for (; candy[ph].x<h; ph++) {
-	  if (bucket[candy[pt].color][0]!=i) {
-	    throw "There is something wrong in solve().";
-	  }
-	  bucket[candy[pt].color][1]--;
-	  if (!bucket[candy[pt].color][1]) {
-	    bucket[0][1]--;
+	  if (candy[pt].y<=i) {
+	    assert(bucket[candy[pt].color][0]==ver);
+	    bucket[candy[pt].color][1]--;
+	    if (!bucket[candy[pt].color][1]) {
+	      bucket[0][1]--;
+	    }
 	  }
 	}
       }
-      // Bookmark
+      ans = max(ans, pt-ph);
     }
   }
+  for (int i=1; i<=yn; i++) {
+    ver++;
+    bucket[0][0] = ver;
+    bucket[0][1] = 0;
+    for (int h=1, t=1, ph=1, pt=1; t<=xn; t++) {
+      for (; pt<=n && candy[pt].x<=t; pt++) {
+	if (candy[pt].y>=i) {
+	  if (bucket[candy[pt].color][0]!=ver) {
+	    bucket[candy[pt].color][0] = ver;
+	    bucket[candy[pt].color][1] = 0;
+	  }
+	  if (!bucket[candy[pt].color][1]) {
+	    bucket[0][1]++;
+	  }
+	  bucket[candy[pt].color][1]++;
+	}
+      }
+      for (; h<=t && bucket[0][1]>=k; h++) {
+	for (; candy[ph].x<h; ph++) {
+	  if (candy[pt].y>=i) {
+	    assert(bucket[candy[pt].color][0]==ver);
+	    bucket[candy[pt].color][1]--;
+	    if (!bucket[candy[pt].color][1]) {
+	      bucket[0][1]--;
+	    }
+	  }
+	}
+      }
+      ans = max(ans, pt-ph);
+    }
+  }
+  return ans;
 }
 
 int main() {
-  #ifdef DEBUG
+#ifdef DEBUG
   freopen("1.in", "r", stdin);
   freopen("1.out", "w", stdout);
-  #endif
+#endif
 
   int t;
   scanf("%d", &t);
