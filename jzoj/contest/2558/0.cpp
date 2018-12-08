@@ -49,22 +49,29 @@ int main() {
 
   int n, k;
   scanf("%d %d", &n, &k);
-  Matrix temp, q;
-  temp = {.n=2, .m=2, .a={{0, 1}, {1, 1}}};
-  q = {.n=1, .m=2, .a={{1 ,1}}};
-  q = q*qpower(temp, k+1);
-
   static int s[MAXN+1];
   for (int i=1; i<=n; i++) {
     scanf("%d", s+i);
   }
   sort(s+1, s+n+1);
-
-  long long ans=0;
+  long long ans=0, a, b;
   for (int i=1; i<=n-2; i++) {
-    ans = (ans+s[i])%MODS;
+    ans = ((ans+s[i])%MODS+MODS)%MODS;
   }
-  ans = (ans+(s[n-1]*q.a[0][0])%MODS+(s[n]*((q.a[0][1]+MODS-1)%MODS))%MODS)%MODS;
+  if (s[n-1]<0) {
+    int t=(s[n-1]/-s[n])+1;
+    ans += ((s[n-1]+(s[n-1]+s[n]*(t-1)))*t/2)%MODS;
+    a=s[n-1]+s[n]*t, b=s[n];
+    k-= t;
+  } else {
+    a=s[n-1], b=s[n];
+  }
+
+  Matrix temp, q;
+  temp = {.n=2, .m=2, .a={{0, 1}, {1, 1}}};
+  q = {.n=1, .m=2, .a={{1 ,1}}};
+  q = q*qpower(temp, k+1);
+  ans = (ans+(a*q.a[0][0])%MODS+(b*((q.a[0][1]+MODS-1)%MODS))%MODS)%MODS;
   printf("%lld", ans);
 
   fclose(stdin);
