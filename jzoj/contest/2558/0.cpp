@@ -8,7 +8,8 @@ using namespace std;
 
 class Matrix {
 public:
-  int n, m, a[2][2];
+  int n, m;
+  long long a[2][2];
 
   Matrix operator* (Matrix a) {
     Matrix ret;
@@ -59,12 +60,12 @@ int main() {
   }
   sort(s+1, s+n+1);
 
-  int ans=0;
+  long long ans=0;
   for (int i=1; i<=n-2; i++) {
     ans = (ans+s[i])%MODS;
   }
   ans = (ans+(s[n-1]*q.a[0][0])%MODS+(s[n]*((q.a[0][1]+MODS-1)%MODS))%MODS)%MODS;
-  printf("%d", ans);
+  printf("%lld", ans);
 
   fclose(stdin);
   fclose(stdout);
