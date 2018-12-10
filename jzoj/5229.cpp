@@ -1,17 +1,171 @@
 #define DEBUG
 #include <cstdio>
-#include <algorthm>
+#include <algorithm>
 #define MAXN 100000
+#define MAXK 100000
 
 using namespace std;
 
 class Candy {
 public:
-  int x, y, color;
+  int x, y, color, id;
+
+
+  static bool cmpX(Candy a, Candy b) {
+    return a.x<b.x;
+  }
+
+  static bool cmpY(Candy a, Candy b) {
+    return a.y<b.y;
+  }
 };
 
+class TreeArray {
+public:
+  int a[MAXN+1], n;
+
+  void init(int n) {
+    for (int i=1; i<=n; i++) {
+      a[i] = 0;
+    }
+    this->n = n;
+  }
+
+  int lowbit(int k) {
+    return -k&k;
+  }
+
+  void set(int o, int v) {
+    for (int i=o; i<=n; i+=lowbit(i)) {
+      a[i] += v;
+    }
+  }
+
+  int get(int o) {
+    int ret=0;
+    for (int i=o; i>0; i-=lowbit(i)) {
+      ret += a[o];
+    }
+    return ret;
+  }
+};
+
+class HashEle {
+public:
+  int v, *pos;
+
+  void init(int *x) {
+    pos = x;
+    v = *x;
+  }
+
+  static bool cmp(HashEle a, HashEle b) {
+    return a.v<b.v;
+  }
+};
+
+class List {
+public:
+  int n[MAXN+2], p[MAXN+2];
+
+  void ins(int last, int o) {
+    p[o] = last;
+    n[o] = p[n[last]];
+    p[n[last]] = o;
+    n[last] = o;
+  }
+
+  void pop(int o) {
+    p[n[o]] = p[o];
+    n[p[o]] = n[o];
+  }
+};
+
+void hashing(Candy candy[], int n, int &xn, int &yn) {
+  static HashEle x[MAXN+1], y[MAXN+1];
+  for (int i=1; i<=n; i++) {
+    x[i].init(&candy[i].x);
+  }
+  sort(x+1, x+n+1, HashEle::cmp);
+  int p = *x[1].pos = 1;
+  for (int i=2; i<=n; i++) {
+    if (x[i].v!=x[i-1].v) {
+      p++;
+    }
+    *x[i].pos = p;
+  }
+  xn = p;
+  for (int i=1; i<=n; i++) {
+    y[i].init(&candy[i].y);
+  }
+  sort(y+1, y+n+1, HashEle::cmp);
+  p = *y[1].pos = 1;
+  for (int i=2; i<=n; i++) {
+    if (y[i].v!=y[i-1].v) {
+      p++;
+    }
+    *y[i].pos = p;
+  }
+  yn = p;
+}
+
 int solve(Candy candy[], int n, int k) {
-  //Bookmark
+  int xn, yn, ans=0;
+  hashing(candy, n, xn, yn);
+
+  static List list;
+  static int last[MAXK+1];
+  sort(candy+1, candy+n+1, Candy::cmpX);
+  for (int i=1; i<=k; i++) {
+    last[i] = 0;
+  }
+  for (int i=1; i<=n; i++) {
+    if (!last[candy[i].color]) {
+      list.n[candy[i].id] = candy[i].id;
+      list.p[candy[i].id] = candy[i].id;
+    } else {
+      list.ins(last[candy[i].color], candy[i].id);
+    }
+    last[candy[i].color] = candy[i].id;
+  }
+  
+  static int map[MAXN+1];
+  static TreeArray tree;
+  sort(candy+1, candy+n+1, Candy::cmpY);
+  map[0] = candy[0].id = 0, candy[0].x=0;
+  map[n+1] = candy[n+1].id = n+1, candy[n+1].x=xn+1;
+  for (int i=1; i<=n; i++) {
+    map[candy[i].id] = i;
+  }
+  for (int i=1; i<=k; i++) {
+    list.ins(last[i], n+1);
+    last[i] = n+1;
+    list.ins(n+1, 0);
+    tree.init(n);
+    for (int j=1; j<=n; j++) {
+      tree.set(candy[j].x, 1);
+    }
+    for (int j=last[i]; candy[map[j]].x>candy[map[list.p[j]]].x; j=list.p[j]) {
+      int l=candy[map[list.p[j]]].x+1, r=candy[map[j]].x-1;
+      if (r>=l) {
+	ans = max(ans, tree.get(r)-tree.get(l-1));
+      }
+    }
+    for (int j=1, p=1; j<=yn; j++) {
+      for (; candy[p].y<j; p++) {
+	tree.set(candy[p].x, -1);
+	if (candy[p].color==i) {
+	  int l=candy[map[list.p[candy[p].id]]].x+1, r=candy[map[list.n[candy[p].id]]].x-1;
+	  if (l>=r) {
+	    ans = max(ans, tree.get(l)-tree.get(r-1));
+	  }
+	  list.pop(candy[p].id);
+	}
+      }
+    }
+  }
+
+  return ans;
 }
 
 int main() {
@@ -28,6 +182,7 @@ int main() {
     scanf("%d %d", &n, &k);
     for (int i=1; i<=n; i++) {
       scanf("%d %d %d", &candy[i].x, &candy[i].y, &candy[i].color);
+      candy[i].id = i;
     }
     int ans=solve(candy, n, k);
     for (int i=1; i<=n; i++){
