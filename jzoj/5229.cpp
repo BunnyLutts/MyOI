@@ -22,29 +22,35 @@ public:
 
 class TreeArray {
 public:
-  int a[MAXN+1], n;
+  int a[MAXN+1], n, v[MAXN+1];
 
   void init(int n) {
-    for (int i=1; i<=n; i++) {
-      a[i] = 0;
-    }
+    v[0]++;
     this->n = n;
   }
 
   int lowbit(int k) {
-    return -k&k;
+    return (-k)&k;
   }
 
-  void set(int o, int v) {
+  void set(int o, int t) {
     for (int i=o; i<=n; i+=lowbit(i)) {
-      a[i] += v;
+      if (v[i]!=v[0]) {
+	a[i] = 0;
+	v[i] = i;
+      }
+      a[i] += t;
     }
   }
 
   int get(int o) {
     int ret=0;
     for (int i=o; i>0; i-=lowbit(i)) {
-      ret += a[o];
+      if (v[i]!=v[0]) {
+	a[i] = 0;
+	v[i] = i;
+      }
+      ret += a[i];
     }
     return ret;
   }
@@ -70,9 +76,9 @@ public:
 
   void ins(int last, int o) {
     p[o] = last;
-    n[o] = p[n[last]];
-    p[n[last]] = o;
-    n[last] = o;
+    n[o] = n[last];
+    n[p[o]] = o;
+    p[n[o]] = o;
   }
 
   void pop(int o) {
@@ -141,7 +147,7 @@ int solve(Candy candy[], int n, int k) {
     list.ins(last[i], n+1);
     last[i] = n+1;
     list.ins(n+1, 0);
-    tree.init(n);
+    tree.init(xn);
     for (int j=1; j<=n; j++) {
       tree.set(candy[j].x, 1);
     }
@@ -156,8 +162,8 @@ int solve(Candy candy[], int n, int k) {
 	tree.set(candy[p].x, -1);
 	if (candy[p].color==i) {
 	  int l=candy[map[list.p[candy[p].id]]].x+1, r=candy[map[list.n[candy[p].id]]].x-1;
-	  if (l>=r) {
-	    ans = max(ans, tree.get(l)-tree.get(r-1));
+	  if (r>=l) {
+	    ans = max(ans, tree.get(r)-tree.get(l-1));
 	  }
 	  list.pop(candy[p].id);
 	}
