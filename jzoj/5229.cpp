@@ -142,11 +142,11 @@ int solve(Candy candy[], int n, int k) {
     tree.set(candy[i].x, 1);
   }
   for (int i=1; i<=k; i++) {
-    ans[k] = tree.get(xn)-tree.get(candy[map[last[i]]].x);
+    ans[i] = tree.get(xn)-tree.get(candy[map[last[i]]].x);
     for (int j=last[i]; j; j=list.p[j]) {
       int l=candy[map[list.p[j]]].x+1, r=candy[map[j]].x-1;
       if (r>=l) {
-	ans[k] = max(ans[k], tree.get(r)-tree.get(l-1));
+	ans[i] = max(ans[i], tree.get(r)-tree.get(l-1));
       }
     }
   }
