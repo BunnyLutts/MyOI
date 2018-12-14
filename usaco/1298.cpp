@@ -2,9 +2,13 @@
 #include <cstdio>
 #include <algorithm>
 #define MAXN 50
-#define MAXR 1024
+#define MAXM 1023
 
 using namespace std;
+
+bool solve(int o, int x, int n, int m, int a[], int b[], int prea, int preb) {
+  for (int i)
+}
 
 int main() {
 #ifdef DEBUG
@@ -12,25 +16,40 @@ int main() {
   freopen("1298.out", "w", stdout);
 #endif
 
-  static int board[MAXN+1], target[MAXR+1];
-  int n, r;
+  static int a[MAXN+1], b[MAXM+1];
+  int n, m;
   scanf("%d", &n);
   for (int i=1; i<=n; i++) {
-    scanf("%d", board+i);
+    scanf("%d", a+i);
   }
-  sort(board+1, board+n+1);
-  scanf("%d", &r);
-  for (int i=1; i<=r; i++) {
-    scanf("%d", target+i);
+  sort(a+1, a+n+1);
+  scanf("%d", &m);
+  for (int i=1; i<=m; i++) {
+    scanf("%d", b+i);
   }
-  sort(target+1, target+r+1);
+  sort(b+1, b+m+1);
+  int temp=0;
+  for (int i=1; i<=n; i++) {
+    temp += a[i];
+  }
+  for (int i=1; i<=m; i++) {
+    temp -= b[i];
+    if (temp<0) {
+      m = i-1;
+    }
+  }
 
   int ans=0;
-  for (int i=1, j=1; i<=n; i++) {
-    for (; board[i]>=target[j]; board[i]-=target[j], j++) ans++;
+  for (int l=1, r=m, mid; l<r; ) {
+    mid = (l+r)/2;
+    if (solve(1, mid, n, m, a, b)) {
+      l = mid+1;
+      ans = mid;
+    } else {
+      r = mid-1;
+    }
   }
-  printf("%d\n", ans);
-  
+  printf("%d", ans);
 
   fclose(stdin);
   fclose(stdout);
