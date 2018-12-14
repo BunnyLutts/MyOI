@@ -37,7 +37,7 @@ public:
     for (int i=o; i<=n; i+=lowbit(i)) {
       if (v[i]!=v[0]) {
 	a[i] = 0;
-	v[i] = i;
+	v[i] = v[0];
       }
       a[i] += t;
     }
@@ -76,14 +76,17 @@ public:
 
   void ins(int last, int o) {
     p[o] = last;
-    n[o] = n[last];
-    n[p[o]] = o;
-    p[n[o]] = o;
+    n[last] = o;
+    n[o] = 0;
   }
 
   void pop(int o) {
-    p[n[o]] = p[o];
-    n[p[o]] = n[o];
+    if (n[o]) {
+      p[n[o]] = p[o];
+    }
+    if (p[o]) {
+      n[p[o]] = n[o];
+    }
   }
 };
 
@@ -116,7 +119,7 @@ void hashing(Candy candy[], int n, int &xn, int &yn) {
 }
 
 int solve(Candy candy[], int n, int k) {
-  int xn, yn, ans=0;
+  int xn, yn;
   hashing(candy, n, xn, yn);
 
   static List list;
@@ -126,52 +129,46 @@ int solve(Candy candy[], int n, int k) {
     last[i] = 0;
   }
   for (int i=1; i<=n; i++) {
-    if (!last[candy[i].color]) {
-      list.n[candy[i].id] = candy[i].id;
-      list.p[candy[i].id] = candy[i].id;
-    } else {
-      list.ins(last[candy[i].color], candy[i].id);
-    }
+    list.ins(last[candy[i].color], candy[i].id);
     last[candy[i].color] = candy[i].id;
   }
   
-  static int map[MAXN+1];
+  static int map[MAXN+1], ans[MAXK+1];
   static TreeArray tree;
   sort(candy+1, candy+n+1, Candy::cmpY);
-  map[0] = candy[0].id = 0, candy[0].x=0;
-  map[n+1] = candy[n+1].id = n+1, candy[n+1].x=xn+1;
+  tree.init(xn);
   for (int i=1; i<=n; i++) {
     map[candy[i].id] = i;
+    tree.set(candy[i].x, 1);
   }
   for (int i=1; i<=k; i++) {
-    list.ins(last[i], n+1);
-    last[i] = n+1;
-    list.ins(n+1, 0);
-    tree.init(xn);
-    for (int j=1; j<=n; j++) {
-      tree.set(candy[j].x, 1);
-    }
-    for (int j=last[i]; candy[map[j]].x>candy[map[list.p[j]]].x; j=list.p[j]) {
+    ans[k] = tree.get(xn)-tree.get(candy[map[last[i]]].x);
+    for (int j=last[i]; j; j=list.p[j]) {
       int l=candy[map[list.p[j]]].x+1, r=candy[map[j]].x-1;
       if (r>=l) {
-	ans = max(ans, tree.get(r)-tree.get(l-1));
+	ans[k] = max(ans[k], tree.get(r)-tree.get(l-1));
       }
     }
-    for (int j=1, p=1; j<=yn; j++) {
-      for (; candy[p].y<j; p++) {
-	tree.set(candy[p].x, -1);
-	if (candy[p].color==i) {
-	  int l=candy[map[list.p[candy[p].id]]].x+1, r=candy[map[list.n[candy[p].id]]].x-1;
-	  if (r>=l) {
-	    ans = max(ans, tree.get(r)-tree.get(l-1));
-	  }
-	  list.pop(candy[p].id);
-	}
+  }
+  for (int i=1, p=1; i<=yn; i++) {
+    for (; candy[p].y<i; p++) {
+      tree.set(candy[p].x, -1);
+      int l=candy[map[list.p[candy[p].id]]].x+1, r=candy[map[list.n[candy[p].id]]].x-1;
+      if (r>=l) {
+	ans[candy[p].color] = max(ans[candy[p].color], tree.get(r)-tree.get(l-1));
+      } else if (!list.n[candy[p].id]) {
+	ans[candy[p].color] = max(ans[candy[p].color], tree.get(xn)-tree.get(l-1));
       }
+      list.pop(candy[p].id);
     }
   }
 
-  return ans;
+  ans[0] = 0;
+  for (int i=1; i<=k; i++) {
+    ans[0] = max(ans[0], ans[i]);
+  }
+
+  return ans[0];
 }
 
 int main() {
