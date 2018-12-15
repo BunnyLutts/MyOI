@@ -1,0 +1,105 @@
+#define DEBUG
+#include <cstdio>
+#include <algorithm>
+#define OFF(x, y) (n*(x)+(y)-n)
+#define MAXN 500
+#define MAXM 500
+#define MAXQ 600000
+
+using namespace std;
+
+class Set {
+public:
+  int a[MAXN*MAXM+1];
+
+  void init(int n) {
+    for (int i=1; i<=n; i++) {
+      a[i] = i;
+    }
+  }
+
+  int getf(int o) {
+    if (a[o]!=o) {
+      a[o] = getf(a[o]);
+    }
+    return a[o];
+  }
+
+  void merge(int x, int y) {
+    if (getf(x)!=getf(y)) {
+      a[getf(x)] = getf(y);
+    }
+  }
+
+  bool together(int x, int y) {
+    return getf(x)==getf(y);
+  }
+};
+
+class Ques {
+public:
+  int x, y, a, b, pos;
+
+  static bool cmp(Ques a, Ques b) {
+    return a.x+a.y>b.x+b.y;
+  }
+};
+
+int main () {
+#ifdef DEBUG
+  freopen("2.in", "r", stdin);
+  freopen("2.out", "w", stdout);
+#endif
+
+  int n, m;
+  static int map[MAXN+1][MAXM+1];
+  scanf("%d %d", &n, &m);
+  for (int i=1; i<=n; i++) {
+    for (int j=1; j<=m; j++) {
+      scanf("%1d", &map[i][j]);
+    }
+  }
+
+  static Ques ques[MAXQ+1];
+  int q;
+  scanf("%d", &q);
+  for (int i=1; i<=q; i++) {
+    scanf("%d %d %d %d", &ques[i].x, &ques[i].y, &ques[i].a, &ques[i].b);
+    ques[i].pos = i;
+  }
+  sort(ques+1, ques+q+1, Ques::cmp);
+
+  static Set set;
+  static bool ans[MAXQ+1];
+  set.init(n*m);
+  for (int i=n+m, p=1; i>=2; i--) {
+#ifdef DEBUG
+    if (i==10) {
+      printf("DEBUG\n");
+    }
+#endif
+    for (int j=n; j>0; j--) {
+      if (i>j && i-j<=m) {
+	if (!map[j][i-j]) {
+	  if (j+1<=n && !map[j+1][i-j]) {
+	    set.merge(OFF(j, i-j), OFF(j+1, i-j));
+	  }
+	  if (i-j+1<=m && !map[j][i-j+1]) {
+	    set.merge(OFF(j, i-j), OFF(j, i-j+1));
+	  }
+	}
+      }
+    }
+    for (; ques[p].x+ques[p].y>=i && p<=q; p++) {
+      ans[ques[p].pos] = set.together(OFF(ques[p].x, ques[p].y), OFF(ques[p].a, ques[p].b));
+    }
+  } 
+
+  for (int i=1; i<=q; i++) {
+    printf(ans[i] ? "Safe\n" : "Dangerous\n");
+  }
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}

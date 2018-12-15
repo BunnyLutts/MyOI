@@ -1,0 +1,39 @@
+#define DEBUG
+#include <cstdio>
+#include <algorithm>
+#define MAXN 50
+#define MAXC 20
+#define MAXAB 40
+#define MAXL (MAXN*MAXC*MAXAB)
+
+using namespace std;
+
+int main() {
+#ifdef DEBUG
+  freopen("abcd.in", "r", stdin);
+  freopen("abcd.out", "w", stdout);
+#endif // DEBUG
+
+  static int a[MAXN+1], b[MAXN+1], c[MAXN+1], d[MAXN+1], f[MAXN+1][MAXL+1];
+  int n;
+  scanf("%d", &n);
+  for (int i=1; i<=n; i++) {
+    scanf("%d %d %d %d", a+i, b+i, c+i, d+i);
+  }
+
+  for (int i=1; i<=n; i++) {
+    for (int j=-MAXL; j<=MAXN*MAXC; j++) {
+      for (int k=a[i]; k<=b[i]; k++) {
+	if (j-c[i]*k+MAXL>=0 && j-c[i]*k+MAXL<=2*MAXL) {
+	  f[i][j+MAXL] = max(f[i][j+MAXN*MAXAB], f[i-1][j-c[i]*k+MAXL]+k*d[i]);
+	}
+      }
+    }
+  }
+
+  printf("%d", f[n][0]);
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
