@@ -2,20 +2,20 @@
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
-#define MAXN 50
+#define MAXN 200
 #define MAXC 20
-#define MAXAB 40
+#define MAXAB 50
 #define MAXL (MAXN*MAXC*MAXAB)
 
 using namespace std;
 
 int main() {
 #ifdef DEBUG
-  freopen("0.in", "r", stdin);
-  freopen("0.out", "w", stdout);
+  freopen("100044.in", "r", stdin);
+  freopen("100044.out", "w", stdout);
 #endif // DEBUG
 
-  static int a[MAXN+1], b[MAXN+1], c[MAXN+1], d[MAXN+1], f[MAXN+1][MAXL*2+1], suf[MAXN+2][2];
+  static int a[MAXN+1], b[MAXN+1], c[MAXN+1], d[MAXN+1], f[2][MAXL*2+1], suf[MAXN+2][2];
   int n;
   scanf("%d", &n);
   for (int i=1; i<=n; i++) {
@@ -38,15 +38,15 @@ int main() {
     for (int j=-suf[i+1][1]; j<=-suf[i+1][0]; j++) {
       for (int k=a[i]; k<=b[i]; k++) {
 	if (j-c[i]*k+MAXL>=0 && j-c[i]*k+MAXL<=2*MAXL) {
-	  if (f[i][j+MAXL]<f[i-1][j-c[i]*k+MAXL]+k*d[i]) {
-	    f[i][j+MAXL] = f[i-1][j-c[i]*k+MAXL]+k*d[i];
+	  if (f[i%2][j+MAXL]<f[(i-1)%2][j-c[i]*k+MAXL]+k*d[i]) {
+	    f[i%2][j+MAXL] = f[(i-1)%2][j-c[i]*k+MAXL]+k*d[i];
 	  }
 	}
       }
     }
   }
 
-  printf("%d", f[n][MAXL]);
+  printf("%d", f[n%2][MAXL]);
 
   fclose(stdin);
   fclose(stdout);
