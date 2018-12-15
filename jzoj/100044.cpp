@@ -1,11 +1,11 @@
 #define DEBUG
 #include <cstdio>
-#include <cstring>
 #include <algorithm>
 #define MAXN 200
 #define MAXC 20
 #define MAXAB 50
 #define MAXL (MAXN*MAXC*MAXAB)
+#define INF 0x7ffffff
 
 using namespace std;
 
@@ -31,15 +31,20 @@ int main() {
     }
   }
 
-  memset(f, 128, sizeof(f));
-
+  for (int i=1; i<=2*MAXL; i++) {
+    f[0][i] = -INF;
+  }
   f[0][MAXL] = 0;
-  for (int i=1; i<=n; i++) {
+
+  for (int i=0; i<n; i++) {
+    for (int j=-suf[i+2][1]; j<=-suf[i+2][0]; j++) {
+      f[(i+1)%2][j+MAXL] = -INF;
+    }
     for (int j=-suf[i+1][1]; j<=-suf[i+1][0]; j++) {
-      for (int k=a[i]; k<=b[i]; k++) {
-	if (j-c[i]*k+MAXL>=0 && j-c[i]*k+MAXL<=2*MAXL) {
-	  if (f[i%2][j+MAXL]<f[(i-1)%2][j-c[i]*k+MAXL]+k*d[i]) {
-	    f[i%2][j+MAXL] = f[(i-1)%2][j-c[i]*k+MAXL]+k*d[i];
+      if (f[i%2][j+MAXL]>-INF) {
+	for (int k=a[i+1]; k<=b[i+1]; k++) {
+	  if (j+k*c[i+1]>=-suf[i+2][1] && j+k*c[i+1]<=-suf[i+2][0]) {
+	    f[(i+1)%2][j+k*c[i+1]+MAXL] = max(f[(i+1)%2][j+k*c[i+1]+MAXL], f[i%2][j+MAXL]+d[i+1]*k);
 	  }
 	}
       }
