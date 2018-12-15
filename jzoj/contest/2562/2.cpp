@@ -1,105 +1,80 @@
 #define DEBUG
 #include <cstdio>
-#include <algorithm>
-#define OFF(x, y) (n*(x)+(y)-n)
-#define MAXN 500
-#define MAXM 500
-#define MAXQ 600000
+#define MAXN 200
+#define MAXM 200
 
 using namespace std;
 
-class Set {
-public:
-  int a[MAXN*MAXM+1];
-
-  void init(int n) {
-    for (int i=1; i<=n; i++) {
-      a[i] = i;
+bool dfs(int x, int y, int a, int b, int n, int m, int map[MAXN+1][MAXM+1], bool book[MAXN+1][MAXM+1]) {
+  if (x==a && y==b) {
+    return true;
+  }
+  book[x][y] = true;
+  if (x+1<=n && !map[x+1][y] && !book[x+1][y]) {
+    if (dfs(x+1, y, a, b, n, m, map, book)) {
+      return true;
     }
   }
-
-  int getf(int o) {
-    if (a[o]!=o) {
-      a[o] = getf(a[o]);
-    }
-    return a[o];
-  }
-
-  void merge(int x, int y) {
-    if (getf(x)!=getf(y)) {
-      a[getf(x)] = getf(y);
+  if (y+1<=m && !map[x][y+1] && !book[x][y+1]) {
+    if (dfs(x, y+1, a, b, n, m, map, book)) {
+      return true;
     }
   }
+  return false;
+}
 
-  bool together(int x, int y) {
-    return getf(x)==getf(y);
+void dfs(int x, int y, int n, int m, bool flag[51][51], int map[MAXN+1][MAXM+1]) {
+  flag[x][y] = true;
+  if (x+1<=n && !map[x+1][y] && !flag[x+1][y]) {
+    dfs(x+1, y, n, m, flag, map);
   }
-};
-
-class Ques {
-public:
-  int x, y, a, b, pos;
-
-  static bool cmp(Ques a, Ques b) {
-    return a.x+a.y>b.x+b.y;
+  if (y+1<=m && !map[x][y+1] && !flag[x][y+1]) {
+    dfs(x, y+1, n, m, flag, map);
   }
-};
+}
 
-int main () {
+int main() {
 #ifdef DEBUG
   freopen("2.in", "r", stdin);
   freopen("2.out", "w", stdout);
 #endif
 
-  int n, m;
   static int map[MAXN+1][MAXM+1];
-  scanf("%d %d", &n, &m);
+  static bool f[51][51][51][51], temp[MAXN+1][MAXM+1];
+  int n, m;
+  scanf("%d", &n);
+  bool type = n<=50 && m<=50;
   for (int i=1; i<=n; i++) {
     for (int j=1; j<=m; j++) {
       scanf("%1d", &map[i][j]);
     }
   }
 
-  static Ques ques[MAXQ+1];
-  int q;
-  scanf("%d", &q);
-  for (int i=1; i<=q; i++) {
-    scanf("%d %d %d %d", &ques[i].x, &ques[i].y, &ques[i].a, &ques[i].b);
-    ques[i].pos = i;
-  }
-  sort(ques+1, ques+q+1, Ques::cmp);
-
-  static Set set;
-  static bool ans[MAXQ+1];
-  set.init(n*m);
-  for (int i=n+m, p=1; i>=2; i--) {
-#ifdef DEBUG
-    if (i==10) {
-      printf("DEBUG\n");
-    }
-#endif
-    for (int j=n; j>0; j--) {
-      if (i>j && i-j<=m) {
-	if (!map[j][i-j]) {
-	  if (j+1<=n && !map[j+1][i-j]) {
-	    set.merge(OFF(j, i-j), OFF(j+1, i-j));
-	  }
-	  if (i-j+1<=m && !map[j][i-j+1]) {
-	    set.merge(OFF(j, i-j), OFF(j, i-j+1));
-	  }
-	}
+  scanf("%d", &m);
+  if (type) {
+    for (int i=1; i<=n; i++) {
+      for (int j=1; j<=m; j++) {
+	dfs(i, j, n, m, f[i][j], map);
       }
     }
-    for (; ques[p].x+ques[p].y>=i && p<=q; p++) {
-      ans[ques[p].pos] = set.together(OFF(ques[p].x, ques[p].y), OFF(ques[p].a, ques[p].b));
+  }
+  for (int i=1; i<=m; i++) {
+    int x, y, a, b;
+    scanf("%d %d %d %d", &x, &y, &a, &b);
+    if (type) {
+      printf(f[x][y][a][b] ? "Safe\n" : "Dangerous\n");
+    } else {
+      for (int i=1; i<=n; i++) {
+	for (int j=1; j<=m; j++) {
+	  temp[i][j] = false;
+	}
+      }
+      printf(dfs(x, y, a, b, n, m, map, temp) ? "Safe\n" : "Dangerous\n");
     }
-  } 
-
-  for (int i=1; i<=q; i++) {
-    printf(ans[i] ? "Safe\n" : "Dangerous\n");
   }
 
   fclose(stdin);
   fclose(stdout);
+ 
   return 0;
 }
