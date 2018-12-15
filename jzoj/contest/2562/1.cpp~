@@ -1,0 +1,100 @@
+#define DEBUG
+#include <cstdio>
+#include <algorithm>
+#define MAXA 1000000
+#define MAXN 1000
+#define MAXM 1000
+
+using namespace std;
+
+class SegmentTree {
+public:
+  int v[4*MAXN+1];
+
+  void set(int o, int l, int r, int t, int tv) {
+    if (l==r) {
+      v[o] = tv;
+    } else {
+      int mid=(l+r)/2;
+      if (t<=mid) {
+	set(o*2, l, mid, t, tv);
+      } else {
+	set(o*2+1, mid+1, r, t, tv);
+      }
+      v[o] = v[o*2]+v[o*2+1];
+    }
+  }
+
+  int get(int o, int l, int r, int tl, int tr) {
+    if (l==tl && r==tr) {
+      return v[o];
+    } else {
+      int mid=(l+r)/2, ret=0;
+      if (tr>=l && tl<=mid) {
+	ret += get(o*2, l, mid, max(l, tl), min(mid, tr));
+      }
+      if (tr>mid && tl<=r) {
+	ret += get(o*2+1, mid+1, r, max(mid+1, tl), max(r, tr));
+      }
+      return ret;
+    }
+  }
+};
+
+void initFlag(int n, bool flag[]) {
+  flag[0] = flag[1] = true;
+  for (int i=2; i<=n; i++) {
+    if (flag[i]) {
+      for (int j=2; i*j<=n; j++) {
+	flag[i*j] = false;
+      }
+    }
+  }
+  flag[6] = true;
+  for (int i=1; (1<<i)<=n; i++) {
+    flag[1<<i] = true;
+  }
+}
+
+int main() {
+#ifdef DEBUG
+  freopen("1.in", "r", stdin);
+  freopen("1.out", "w", stdout);
+#endif
+
+  static bool flag[MAXA+1];
+  initFlag(MAXA, flag);
+  int n, m;
+  static int a[MAXN+1];
+  static SegmentTree tree;
+  scanf("%d %d", &n, &m);
+  for (int i=1; i<=n; i++) {
+    scanf("%d", a+i);
+    tree.set(1, 1, n, i, flag[a[i]]);
+  }
+
+  for (int i=1; i<=m; i++) {
+    int type;
+    scanf("%d", &type);
+    if (type==1) {
+      int l, r;
+      scanf("%d %d", &l, &r);
+      printf("%d\n", tree.get(1, 1, n, l, r));
+    } else if (type==2) {
+      int l, r, s;
+      scanf("%d %d %d", &l, &r, &s);
+      for (int i=l; i<=r; i++) {
+	a[i] %= s;
+	tree.set(1, 1, n, i, flag[a[i]]);
+      }
+    } else {
+      int c, x;
+      scanf("%d %d", &c, &x);
+      tree.set(1, 1, n, c, flag[x]);
+    }
+  }
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
