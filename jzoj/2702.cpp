@@ -1,5 +1,6 @@
 #define DEBUG
 #include <cstdio>
+#include <cstring>
 #define INF 0x7ffffff
 #define MAXN 10000
 #define MAXM 200000
@@ -16,7 +17,7 @@ int max(int a, int b) {
 
 class Graph {
 public:
-  int n, m, ind[MAXN+1], link[2*MAXM+1], to[2*MAXM+1], val[2*MAXM+1], id[2*MAXM+1];
+  int n, m, ind[MAXN+1], link[4*MAXM+1], to[4*MAXM+1], val[4*MAXM+1], id[4*MAXM+1];
 
   void addSide(int u, int v, int w, int o) {
     m++;
@@ -31,27 +32,58 @@ public:
     this->n = n;
   }
 
-  void solve(int o, int limit, int len, int &ans) {
-    static bool bookid[MAXM+1], booko[MAXN+1];
-    booko[o] = true;
-    if (len<limit && len<ans) {
-      for (int i=ind[o]; i; i=link[i]) {
-	if (!bookid[id[i]]) {
-	  bookid[id[i]] = true;
-	  if (to[i]==1) {
-	    ans = min(ans, len+val[i]);
-	  } else if (!booko[to[i]]){
-	    solve(to[i], limit, len+val[i], ans);
+  int solve(int s, int t) {
+    static int f[MAXN+1][2][2], que[MAXN+2];
+    static bool book[MAXN+1];
+    memset(f, 127, sizeof(f));
+    int head=0, tail=0;
+    for (int i=ind[s]; i; i=link[i]) {
+      f[to[i]][0][0] = val[i];
+      f[to[i]][0][1] = id[i];
+      que[++tail] = to[i];
+      book[to[i]] = true;
+    }
+    for (; head!=tail; ) {
+      head = head%(n+1)+1;
+      int x = que[head], y;
+      book[x] = false;
+      for (int i=ind[x]; i; i=link[i]) {
+	y = to[i];
+	bool flag=false;
+	if (f[y][0][0]>f[x][0][0]+val[i] && f[x][0][1]!=id[i]) {
+	  if (f[y][0][1]!=f[x][0][1]) {
+	    f[y][1][0] = f[y][0][0];
+	    f[y][1][1] = f[y][0][1];
 	  }
-	  bookid[id[i]] = false;
-	  if (ans<=limit) {
-	    booko[o] = false;
-	    return;
+	  f[y][0][0] = f[x][0][0]+val[i];
+	  f[y][0][1] = f[x][0][1];
+	  flag = true;
+	} else if (f[y][1][0]>f[x][0][0]+val[i] && f[y][0][1]!=f[x][0][1] && f[x][0][1]!=id[i]) {
+	  f[y][1][0] = f[x][0][0]+val[i];
+	  f[y][1][1] = f[x][0][1];
+	  flag = true;
+	}
+	if (f[y][0][0]>f[x][1][0]+val[i] && f[x][1][1]!=id[i]) {
+	  if (f[y][0][1]!=f[x][1][1]) {
+	    f[y][1][0] = f[y][0][0];
+	    f[y][1][1] = f[y][0][1];
 	  }
+	  f[y][0][0] = f[x][1][0]+val[i];
+	  f[y][0][1] = f[x][1][1];
+	  flag = true;
+	} else if (f[y][1][0]>f[x][1][0]+val[i] && f[y][0][1]!=f[x][1][1] && f[x][1][1]!=id[i]) {
+	  f[y][1][0] = f[x][1][0]+val[i];
+	  f[y][1][1] = f[x][1][1];
+	  flag = true;
+	}
+	if (flag && !book[y]) {
+	  book[y] = true;
+	  tail = tail%(n+1)+1;
+	  que[tail] = y;
 	}
       }
     }
-    booko[o] = false;
+    return f[t][0][0];
   }
 };
 
@@ -62,28 +94,24 @@ int main() {
 #endif
 
   static Graph graph;
-  int n, m, temp=0;
+  int n, m;
   scanf("%d %d", &n, &m);
   for (int i=1; i<=m; i++) {
     int s, t, w, v;
     scanf("%d %d %d %d", &s, &t, &w, &v);
     graph.addSide(s, t, w, i);
     graph.addSide(t, s, v, i);
-    temp += max(w, v);
+    if (s==1) {
+      graph.addSide(0, t, w, i);
+      graph.addSide(t, 0, v, i);
+    } else if (t==1) {
+      graph.addSide(s, 0, w, i);
+      graph.addSide(0, s, v, i);
+    }
   }
   graph.init(n);
 
-  int ans=INF;
-  for (int l=0, r=temp, mid; l<=r; ) {
-    mid = (l+r)/2;
-    graph.solve(1, mid, 0, ans);
-    if (ans<=mid) {
-      r = mid-1;
-    } else {
-      l = mid+1;
-    }
-  }
-  printf("%d", ans);
+  printf("%d", graph.solve(1, 0));
 
   fclose(stdin);
   fclose(stdout);
