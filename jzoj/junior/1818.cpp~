@@ -1,0 +1,26 @@
+#define DEBUG
+#include <cstdio>
+#define MAXM 100
+#define MAXT 10
+
+using namespace std;
+
+int main() {
+  freopen("river.in", "r", stdin);
+  freopen("river.out", "w", stdout);
+
+  static int pos[MAXM+1], f[MAXM+1][MAXT+1];
+  int l, s, t, m;
+  scanf("%d %d %d %d", &l, &s, &t, &m);
+  for (int i=1; i<=m; i++) {
+    scanf("%d", pos+i);
+  }
+
+  for (int i=1; i<=t; i++) {
+    if (pos[1])
+  }
+
+  fclose(stdin);
+  fclose(stdout);
+  return 0;
+}
