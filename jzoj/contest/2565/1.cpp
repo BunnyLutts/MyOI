@@ -42,10 +42,10 @@ public:
 	  } else {
 	    solve(to[i], limit, len+val[i], ans);
 	  }
+	  book[id[i]] = false;
 	  if (ans<=limit) {
 	    return;
 	  }
-	  book[id[i]] = false;
 	}
       }
     }
