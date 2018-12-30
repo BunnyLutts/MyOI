@@ -16,10 +16,8 @@ long long exgcd(long long a, long long b, long long &x, long long &y) {
 }
 
 int main() {
-#ifdef DEBUG
-  freopen("0.in", "r", stdin);
-  freopen("0.out", "w", stdout);
-#endif
+  freopen("solve.in", "r", stdin);
+  freopen("solve.out", "w", stdout);
 
   int t;
   scanf("%d", &t);

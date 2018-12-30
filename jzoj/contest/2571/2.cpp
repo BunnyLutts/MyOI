@@ -1,8 +1,8 @@
 #define DEBUG
 #include <cstdio>
 #define INF 0x7ffffff
-#define MAXN 1000
-#define MAXM 1000
+#define MAXN 5000
+#define MAXM 5000
 
 using namespace std;
 
@@ -12,7 +12,7 @@ int main() {
   freopen("2.out", "w", stdout);
 #endif
 
-  static int coin[MAXN+1][MAXM+1], price[MAXN+1], f[MAXM+1][MAXN+1], g[MAXM+1][MAXN+1];
+  static int coin[MAXM+1][MAXN+1], price[MAXN+1], f[MAXM+1][MAXN+1], g[MAXM+1][MAXN+1];
   int n, p, m;
   scanf("%d %d %d", &n, &m, &p);
   for (int i=1; i<=n; i++) {
@@ -56,7 +56,7 @@ int main() {
     }
   }
 
-  printf("%d\n", f[m][maxp]);
+  printf("%d", f[m][maxp]);
 
   fclose(stdin);
   fclose(stdout);

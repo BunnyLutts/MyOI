@@ -15,10 +15,8 @@ int max(int a, int b) {
 }
 
 int main() {
-#ifdef DEBUG
-  freopen("1.in", "r", stdin);
-  freopen("1.out", "w", stdout);
-#endif
+  freopen("brick.in", "r", stdin);
+  freopen("brick.out", "w", stdout);
 
   static int h[MAXN+1], f[MAXN+1][MAXH+2];
   int n;
