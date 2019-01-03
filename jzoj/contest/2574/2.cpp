@@ -22,7 +22,7 @@ void sort(int *a, int l, int r) {
   }
 }
 
-int max(int a, int b) {
+long long max(long long a, long long b) {
   return a>b ? a : b;
 }
 
@@ -52,11 +52,11 @@ void solve1(int *a, int *map, int n, int m) {
   for (int i=1; i<=m; i++) {
     int l, r;
     scanf("%d %d", &l, &r);
-    int ans=0;
+    long long ans=0;
     for (int i=1; i<=map[0]; i++) {
-      ans = max(ans, map[i]*(f[r][i]-f[l-1][i]));
+      ans = max(ans, (long long)map[i]*(f[r][i]-f[l-1][i]));
     }
-    printf("%d\n", ans);
+    printf("%lld\n", ans);
   }
 }
 
@@ -72,11 +72,11 @@ void solve2(int *a, int *map, int n, int m) {
   for (int i=1; i<=m; i++) {
     int l, r;
     scanf("%d %d", &l, &r);
-    int ans=0;
+    long long ans=0;
     for (int i=1; i<=map[0]; i++) {
-      ans = max(ans, map[i]*(f[r][i]-f[l-1][i]));
+      ans = max(ans, (long long)map[i]*(f[r][i]-f[l-1][i]));
     }
-    printf("%d\n", ans);
+    printf("%lld\n", ans);
   }
 }
 
