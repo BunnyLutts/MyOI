@@ -3,7 +3,7 @@
 #include <cmath>
 #define MAXN 2000
 #define MAXS 20000
-#define EPS 0.0001
+#define EPS 1
 
 using namespace std;
 
