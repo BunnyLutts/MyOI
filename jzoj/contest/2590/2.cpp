@@ -1,28 +1,16 @@
 #define DEBUG
 #include <cstdio>
-#include <cmath>
 #define MAXN 20
 
 int max(int a, int b) {
   return a>b ? a : b;
 }
 
-bool calcp(int a[MAXN+1][MAXN+1], int b[MAXN+1][MAXN+1], int n) {
-  for (int i=1; i<=n; i++) {
-    for (int j=1; j<=n; j++) {
-      if (!(a[i][j]|(abs(b[i][j]-1)))) {
-	return false;
-      }
-    }
-  }
-  return true;
-}
-
-int calc(int a[MAXN+1][MAXN+1], int b[MAXN+1][MAXN+1], int n) {
+int calc(int b[MAXN+1][MAXN+1], int a[MAXN+1][MAXN+1], int n) {
   int ret=0;
   for (int i=1; i<=n; i++) {
     for (int j=1; j<=n; j++) {
-      if (!(a[i][j]|(abs(b[i][j]-1)))) {
+      if (!(a[i][j]||!b[i][j])) {
 	ret++;
       }
     }
@@ -44,13 +32,7 @@ int solve(int o, int n, int a[MAXN+1][MAXN+1]) {
 	x[i][j] = y[i]^y[j];
       }
     }
-    ret = calcp(a, x, n) ? calc(x, a, n) : -1;
-#ifdef DEBUG
-    if (ret) {
-      ret = calcp(a, x, n) ? calc(x, a, n) : -1;
-      printf("!\n");
-    }
-#endif
+    ret = !calc(a, x, n) ? calc(x, a, n) : -1;
   }
   return ret;
 }
