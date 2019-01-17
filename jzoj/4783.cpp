@@ -1,8 +1,8 @@
 #define DEBUG
 #include <cstdio>
+#include <ctime>
 #include <cmath>
-#define MAXN 2000
-#define MAXS 20000
+#define MAXN 3000
 
 using namespace std;
 
@@ -19,14 +19,19 @@ int sqr(int a) {
   return a*a;
 }
 
-inline int read(int &a) {
+inline void read(int &a) {
+  int flag=1;
   a=0;
   char c;
-  for (c=getchar(); c<'0' || c>'9'; c=getchar());
+  for (c=getchar(); (c<'0' || c>'9') && c!='-'; c=getchar());
+  if (c=='-') {
+    flag = -1;
+    c = getchar();
+  }
   for (; c>='0' && c<='9'; c=getchar()) {
     a = a*10+c-'0';
   }
-  return a;
+  a = a*flag;
 }
 
 double dis(const struct Circle *a, const struct Circle *b) {
@@ -54,7 +59,7 @@ void sort(V *a, int l, int r) {
 }
 
 bool solve(struct Circle cir[], double v, int n, int k) {
-  int f[MAXN+1];
+  static int f[MAXN+1];
   for (int i=1; i<=n; i++) {
     f[i] = 0;
     for (int j=0; j<i; j++) {
@@ -92,7 +97,7 @@ int main() {
   freopen("4783.out", "w", stdout);
 #endif
 
-  int n, k, vsize=0;
+  int n, k, vsize=0, f;
   static struct Circle cir[MAXN+1];
   static V v[MAXN*MAXN+1];
   read(n), read(k);
@@ -104,8 +109,11 @@ int main() {
     }
   }
 
+  f = clock();
   sort(v, 1, vsize);
+  printf("D:%ld\n", clock()-f);
 
+  f=clock();
   int ans;
   for (int l=1, r=vsize, mid; l<=r; ) {
     mid = (l+r)/2;
@@ -116,6 +124,8 @@ int main() {
       l = mid+1;
     }
   }
+  printf("D:%ld\n", clock()-f);
+  f=clock();
 
   int a, b, c;
   a = 1;
@@ -123,6 +133,7 @@ int main() {
   c = cir[v[ans].to].t-cir[v[ans].from].t;
   simplizeRadict(a, b);
   simplizeFract(a, c);
+  printf("D:%ld\n", clock()-f);
   printf("%d %d %d", a, b, c);
 
   fclose(stdin);
