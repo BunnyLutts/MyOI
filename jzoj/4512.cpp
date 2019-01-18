@@ -1,7 +1,8 @@
 #define DEBUG
 #include <cstdio>
+#include <cmath>
 #define INF 0x7ffffff
-#define EPS 0.0001
+#define EPS 0.00005
 #define MAXN 2500
 #define MAXK 2500
 #define MAXP 10000
@@ -9,7 +10,7 @@
 using namespace std;
 
 struct Graph {
-  int n=0, m=0, ind[MAXN+1], to[MAXN], link[MAXN], dfn[MAXN+1], son[MAXN+1];
+  int n=0, m=0, ind[MAXN+1], to[MAXN], link[MAXN], dfn[MAXN+1], son[MAXN+1], map[MAXN+1];
 
   void addSide(int fa, int s) {
     m++;
@@ -20,6 +21,7 @@ struct Graph {
 
   void build(int o) {
     son[o] = dfn[o] = n++;
+    map[dfn[o]] = o;
     for (int i=ind[o]; i; i=link[i]) {
       build(to[i]);
       son[o] = son[to[i]];
@@ -34,14 +36,16 @@ double max(double x, double y) {
 bool solve(double z, int *p, int *s, Graph *g, int n, int k) {
   static double f[MAXN+2][MAXK+1];
   for (int i=0; i<=n+1; i++) {
-    for (int j=1; j<=k; j++) {
+    for (int j=0; j<=k; j++) {
       f[i][j] = -INF;
     }
   }
+  f[n+1][0] = 0;
   for (int i=n; i>=0; i--) {
-    double val=(double)p[g->dfn[i]]-z*s[g->dfn[i]];
+    double val=(double)p[g->map[i]]-z*s[g->map[i]];
+    f[i][0] = f[g->son[g->map[i]]+1][0];
     for (int j=1; j<=k; j++) {
-      f[i][j] = max(f[i+1][j-1]+val, f[g->son[i]+1][j]);
+      f[i][j] = max(f[i+1][j-1]+val, f[g->son[g->map[i]]+1][j]);
     }
   }
   return f[0][k]>=0;
@@ -75,7 +79,7 @@ int main() {
       r = mid-EPS;
     }
   }
-  printf("%.3lf", ans);
+  printf("%.3lf", nearbyint(ans*1000)/1000);
 
   fcloseall();
   return 0;
