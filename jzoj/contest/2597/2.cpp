@@ -18,9 +18,9 @@ int main() {
     scanf("%d %d", &n, &m);
     int ans=0;
     for (int i=1; i<=n; i++) {
-      if (!book[i]) {
-	for (int j=i; j<=n; j*=2) {
-	  book[j] = true;
+      if (!book[i] && (unsigned long long)i*(1<<(m-1))<=(unsigned long long)n) {
+	for (int j=1, x=i; j<=m; j++, x*=2) {
+	  book[x] = true;
 	}
 	ans++;
       }
