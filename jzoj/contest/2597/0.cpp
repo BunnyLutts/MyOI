@@ -1,7 +1,7 @@
 #define DEBUG
 #include <cstdio>
-#define MAXN 9
-#define MAXK 9
+#define MAXN 10
+#define MAXK 10
 
 using namespace std;
 
@@ -9,12 +9,19 @@ struct Official {
   int a, b;
 };
 
+int min(int a, int b) {
+  return a<b ? a : b;
+}
+
 double max(double a, double b) {
   return a>b ? a : b;
 }
 
 double solveByHoney(int o, int a, int n, int *honey, const Official *official, double p, int tot) {
   static bool book[MAXN+1];
+  if (tot*2>n) {
+    return p;
+  }
   if (o<=n) {
     double ret=0;
     book[o] = true;
@@ -42,7 +49,7 @@ double solve(int o, int k, int a, int n, const Official *official) {
   double ret=0;
   if (o<=n) {
     for (int i=0; i<=k; i++) {
-      honey[o] = official[o].b+i*10;
+      honey[o] = min(official[o].b+i*10, 100);
       ret = max(ret, solve(o+1, k-i, a, n, official));
     }
   } else {
