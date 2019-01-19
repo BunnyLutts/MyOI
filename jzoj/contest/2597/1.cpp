@@ -11,7 +11,7 @@ int max(int a, int b) {
 
 class Graph {
 public:
-  int n, m, ind[MAXN+1], to[MAXN*2-1], val[MAXN*2-1], link[MAXN*2-1], dep[MAXN+1], f[MAXN+1][MAXLOGN+1][2];
+  int n, m, k, ind[MAXN+1], to[MAXN*2-1], val[MAXN*2-1], link[MAXN*2-1], dep[MAXN+1], f[MAXN+1][MAXLOGN+1][2];
 
   void init(int n) {
     this->n = n;
@@ -19,6 +19,7 @@ public:
     for (int i=1; i<=n; i++) {
       ind[i] = 0;
     }
+    for (k=0; n; k++, n/=2);
   }
 
   void addSide(int u, int v, int l) {
@@ -43,7 +44,7 @@ public:
   void build() {
     makeDep(1, 0);
 
-    for (int j=1; j<=MAXLOGN; j++) {
+    for (int j=1; j<=k; j++) {
       for (int i=1; i<=n; i++) {
 	int x=i, y=f[i][j-1][0];
 	f[i][j][0] = f[y][j-1][0];
@@ -58,7 +59,7 @@ public:
       ret=u, u=v, v=ret;
     }
     ret = 0;
-    for (int i=MAXLOGN; i>=0; i--) {
+    for (int i=k; i>=0; i--) {
       if (dep[f[u][i][0]]>=dep[v]) {
 	ret = max(ret, f[u][i][1]);
 	u = f[u][i][0];
@@ -67,7 +68,7 @@ public:
     if (u==v) {
       return ret;
     }
-    for (int i=MAXLOGN; i>=0; i--) {
+    for (int i=k; i>=0; i--) {
       if (f[u][i][0]!=f[v][i][0]) {
 	ret = max(ret, max(f[u][i][1], f[v][i][1]));
 	u = f[u][i][0], v = f[v][i][0];
