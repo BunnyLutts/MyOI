@@ -1,5 +1,6 @@
 #define DEBUG
 #include <cstdio>
+#include <cmath>
 #define MAXN 100000
 
 using namespace std;
@@ -13,7 +14,7 @@ int max(int a, int b) {
 }
 
 long long addSqr(long long sqrsum, int sum, int size, int add) {
-  return sqrsum+add*add*size+2*sum*add;
+  return sqrsum+(long long)add*add*size+2LL*sum*add;
 }
 
 class SegmentTree {
@@ -32,15 +33,11 @@ public:
     }
   }
 
-  void merge(int o, int l, int r, int mid) {
-    sum[o] = sum[o*2]+mark[o*2]+sum[o*2+1]+mark[o*2+1];
-    sqrsum[o] = addSqr(sqrsum[o*2], sum[o*2], mid-l+1, mark[o*2])+addSqr(sqrsum[o*2+1], sum[o*2+1], r-mid, mark[o*2+1]);
-  }
-
   void add(int o, int l, int r, int tl, int tr, int tv) {
     markDown(o, l, r);
     if (l==tl && r==tr) {
       mark[o] += tv;
+      markDown(o, l, r);
     } else {
       int mid=(l+r)/2;
       if (tl<=mid && tr>=l) {
@@ -49,7 +46,9 @@ public:
       if (tl<=r && tr>mid) {
 	add(o*2+1, mid+1, r, max(tl, mid+1), min(tr, r), tv);
       }
-      merge(o, l, r, mid);
+      markDown(o*2, l, mid), markDown(o*2+1, mid+1, r);
+      sum[o] = sum[o*2]+sum[o*2+1];
+      sqrsum[o] = sqrsum[o*2]+sqrsum[o*2+1];
     }
   }
 
@@ -79,6 +78,7 @@ int main() {
   static SegmentTree sgt;
   int n, q;
   scanf("%d %d", &n, &q);
+
   for (int i=1; i<=n; i++) {
     int a;
     scanf("%d", &a);
@@ -112,8 +112,8 @@ int main() {
       scanf("%d %d", &a, &b);
       sum = sqrsum = 0;
       sgt.get(1, 1, n, a, b, sum, sqrsum);
-      double ave = (double)sum/(b-a+1);
-      printf("%.4lf\n", (sqrsum-2*ave*sum+n*ave*ave)/n);
+      long double ave = (long double)sum/(b-a+1);
+      printf("%.10LF\n", (sqrsum-2*ave*sum+(b-a+1)*ave*ave)/(b-a+1));
       break;
     }
     }
