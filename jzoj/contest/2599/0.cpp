@@ -113,7 +113,7 @@ int main() {
       sum = sqrsum = 0;
       sgt.get(1, 1, n, a, b, sum, sqrsum);
       double ave = (double)sum/(b-a+1);
-      printf("%.3lf\n", (sqrsum-2*ave*sum+n*ave*ave)/n);
+      printf("%.4lf\n", (sqrsum-2*ave*sum+n*ave*ave)/n);
       break;
     }
     }
