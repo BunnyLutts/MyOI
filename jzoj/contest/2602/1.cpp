@@ -16,7 +16,7 @@ long long fact(int n) {
 
 long long qpower(long long a, int n) {
   long long s=1;
-  for (; n>1; n>>=2) {
+  for (; n>1; n>>=1) {
     if (n&1) {
       s = s*a%MODS;
     }
@@ -33,7 +33,7 @@ int main() {
 
   long long n, m;
   scanf("%lld %lld", &n, &m);
-  printf("%lld", fact(n-1)*qpower(((n+2)*(n-1)/2+n)%MODS, m-n+1)%MODS);
+  printf("%lld", fact(n-2)*qpower(((n+2)*(n-1)/2+n)%MODS, m-n+1)%MODS);
 
   fcloseall();
   return 0;
